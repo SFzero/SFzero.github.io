@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>记一次渗透过程中的CA证书绕过 | SF Zero的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="由于隐私问题，以下内容均打码。早上来到公司，老大说有个站渗透，你搞搞。于是乎…">
+<meta name="keywords" content="渗透测试">
+<meta property="og:type" content="article">
+<meta property="og:title" content="记一次渗透过程中的CA证书绕过">
+<meta property="og:url" content="http://yoursite.com/post/ca证书绕过/index.html">
+<meta property="og:site_name" content="SF Zero的博客">
+<meta property="og:description" content="由于隐私问题，以下内容均打码。早上来到公司，老大说有个站渗透，你搞搞。于是乎…">
+<meta property="og:image" content="http://yoursite.com/img/ca-1.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-2.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-3.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-4.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-5.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-6.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-7.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-8.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-9.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-10.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-11.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-12.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-13.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-14.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-15.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-16.png">
+<meta property="og:image" content="http://yoursite.com/img/ca-17.png">
+<meta property="og:updated_time" content="2017-12-12T09:36:50.675Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="记一次渗透过程中的CA证书绕过">
+<meta name="twitter:description" content="由于隐私问题，以下内容均打码。早上来到公司，老大说有个站渗透，你搞搞。于是乎…">
+<meta name="twitter:image" content="http://yoursite.com/img/ca-1.png">
+  
+    <link rel="alternative" href="/atom.xml" title="SF Zero的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/rabbit.ico">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+<!-- 点击爱心效果 -->
+<script src="/js/love.js"></script>
+<!-- 背景动画 -->
+<script src="/js/particle.js"></script>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.gif" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="你之所以看不见黑暗,是因为有人正竭尽全力,把黑暗挡在我们看不见的地方">SF Zero</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">Yesterday you said tomorrow</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">文章</a></li>
+                        
+                            <li><a href="/SecNavi/">导航</a></li>
+                        
+                            <li><a href="/about">关于</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="mailto:2255453@qq.com" title="mail">mail</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/EternalBlue/" style="font-size: 10px;">EternalBlue</a> <a href="/tags/NSA/" style="font-size: 10px;">NSA</a> <a href="/tags/Office远程代码执行/" style="font-size: 10px;">Office远程代码执行</a> <a href="/tags/struts2/" style="font-size: 10px;">struts2</a> <a href="/tags/思维导图/" style="font-size: 10px;">思维导图</a> <a href="/tags/扫描器/" style="font-size: 10px;">扫描器</a> <a href="/tags/注入/" style="font-size: 10px;">注入</a> <a href="/tags/测试流程/" style="font-size: 10px;">测试流程</a> <a href="/tags/渗透测试/" style="font-size: 10px;">渗透测试</a> <a href="/tags/越权访问/" style="font-size: 10px;">越权访问</a> <a href="/tags/远程命令执行/" style="font-size: 10px;">远程命令执行</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://www.shungg.cn/">阿舜</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.csdn.net/pygain">pygain</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">SF Zero</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="//img/head.gif" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">SF Zero</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">Yesterday you said tomorrow</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">文章</a></li>
+                
+                    <li><a href="/SecNavi/">导航</a></li>
+                
+                    <li><a href="/about">关于</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="mailto:2255453@qq.com" title="mail">mail</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-ca证书绕过" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/post/ca证书绕过/" class="article-date">
+      <time datetime="2017-07-25T05:50:30.000Z" itemprop="datePublished">2017-07-25</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      记一次渗透过程中的CA证书绕过
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/web安全/">web安全</a>
+    </div>
+
+
+        
+    <div class="article-tag tagcloud">
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/渗透测试/">渗透测试</a></li></ul>
+    </div>
+
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>由于隐私问题，以下内容均打码。<br>早上来到公司，老大说有个站渗透，你搞搞。于是乎…</p>
+</blockquote>
+<a id="more"></a>
+<p><iframe frameborder="no" border="0" marginwidth="0" marginheight="0" width="0" height="0" src="//music.163.com/outchain/player?type=2&id=677804&auto=1&height=66"></iframe>                                                                  </p>
+<hr>
+<h3 id="0x01-渗透过程"><a href="#0x01-渗透过程" class="headerlink" title="0x01 渗透过程"></a>0x01 渗透过程</h3><p>其实每次拿到一个域名我都有点蒙B，总是不知道该如何下手，既然如此那便扫描器走一波吧。<br><img src="/img/ca-1.png" alt=""><br>不要和我说什么收集信息、踩点、C段、旁站、whois、nmap、nessus扫端口、wappalyzer看版本信息、脚本语言、中间件……因为我不会，菜的抠脚！<br>上来先轮一遍扫描器。<br><img src="/img/ca-2.png" alt=""><br><img src="/img/ca-3.png" alt=""><br>然而1分钟以后就GG了，麻蛋的，直接封了我的ip。<br>这么尴尬的事情，又不好意思和客户说让运维给解封，唉，只能挂上ss接着搞了。<br>破网站，贼鸡儿烦，啥工具都不能用，怎么搞？<br>手动来吧，先试试有没有目录遍历、回溯啥的。<br>在域名后面加上/image<br>返回404，Sorry，page Not Found<br>再次尝试/site /test index of / ../ ../..//Windows/system.ini之类的，返回依旧是Sorry，page Not Found<br>不开心！愤怒中轻轻地砸了下键盘，然后竟然…<br><img src="/img/ca-4.png" alt=""><br>意外收获啊，无意间在url里面输入了/rep，后面的路径竟然自动补齐了。弹出了这个。<br><img src="/img/ca-5.png" alt=""><br>然后百度了一下unieap 发现是东软开发的，不过怎么看这个也不像是后台，也不像OA、ERP之类的系统。<br>先不管 尝试一下弱口令 admin 123456什么的。<br>哦，好无情！！！错误次数超过5次，被锁住了10分钟。<br>好吧 耐心的等待10mins，忽然想起以前碰到过的几个admin 密码为1的后台<br>那就试一下吧，然后就surprise！！！ 竟然真的进去了。不过这系统好像暂时没在使用，里面竟然空空如也，没有任何可利用的东西，只能暂时放弃它了。<br>回到主页 发现右上角有个注册和登录，看能不能注册一下 查查有没有越权之类的洞吧<br>于是点了注册。<br><img src="/img/ca-6.png" alt=""><br>然而发现这两个不管点哪个都没法成功注册<br>因为<br><img src="/img/ca-7.png" alt=""><br>那只能撞大运 看能不能进后台了。点登录后来到了这个页面。<br><img src="/img/ca-8.png" alt=""><br>先随便试下admin 密码1 验证码6109，返回：<br><img src="/img/ca-9.png" alt=""><br>想起云盾先知大会上猪猪侠说的 试试那些大众的名字，如：zhangwei liwei tony之类的<br>返回：<br><img src="/img/ca-10.png" alt=""><br>CA证书 -。- 郁闷<br>发现除了admin账户 其他所有账户都需要验证CA证书<br>没办法 抓包试试吧 打开burp<br><img src="/img/ca-11.png" alt=""><br>然后看回显，发现一个问题。<br><img src="/img/ca-12.png" alt=""><br>这个成功是什么鬼？？？<br>接下来尝试下其他需要CA证书才能登陆的账号。<br><img src="/img/ca-13.png" alt=""><br>不同的地方我用红框框起来了。<br>那么尝试一下修改回包信息看看什么效果。<br><img src="/img/ca-14.png" alt=""><br>这是绕过CA验证的节奏啊，因为已经开始验证密码是否正确了。<br>接下来就是成功绕过CA验证登陆了。<br><img src="/img/ca-15.png" alt=""><br>然后用这种方法尝试其他账号，比如user之类的 发现都可以绕过ca直接登录。<br>前提是密码得正确！ 默认密码是八个1 尝试许久尝试出来的。<br><img src="/img/ca-16.png" alt=""><br>最后，经过不懈的努力，还是搞定了管理员账号，并发现了一处上传点。<br><img src="/img/ca-17.png" alt=""></p>
+<p>恩 就到这里吧。</p>
+
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/post/ca证书绕过/">记一次渗透过程中的CA证书绕过</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 SF Zero 的个人博客">SF Zero</a></p>
+        <p><span>发布时间:</span>2017年07月25日 - 13时50分</p>
+        <p><span>最后更新:</span>2017年12月12日 - 17时36分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/post/ca证书绕过/" title="记一次渗透过程中的CA证书绕过">http://yoursite.com/post/ca证书绕过/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/post/ca证书绕过/　　作者: SF Zero" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+    <a href="/post/Xpath注入/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption"><</strong>
+      <div class="article-nav-title">
+        
+          Xpath注入
+        
+      </div>
+    </a>
+  
+  
+    <a href="/post/Penetration Test/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Penetration Test流程</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-渗透过程"><span class="toc-number">1.</span> <span class="toc-text">0x01 渗透过程</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/post/Xpath注入/" title="上一篇: Xpath注入">
+                <i class="fa fa-angle-left"></i>
+            </a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/post/Penetration Test/" title="下一篇: Penetration Test流程">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/post/T-pot/">VM下搭建T-pot</a></li><li class="post-list-item"><a class="post-list-link" href="/post/docker-巡风-pocscan/">Kali下安装docker、巡风、pocscan扫描器</a></li><li class="post-list-item"><a class="post-list-link" href="/post/CVE-2017-11882/">CVE-2017-11882</a></li><li class="post-list-item"><a class="post-list-link" href="/post/越权拿超管/">记一次越权访问拿下超级管理员</a></li><li class="post-list-item"><a class="post-list-link" href="/post/Xpath注入/">Xpath注入</a></li><li class="post-list-item"><a class="post-list-link" href="/post/ca证书绕过/">记一次渗透过程中的CA证书绕过</a></li><li class="post-list-item"><a class="post-list-link" href="/post/Penetration Test/">Penetration Test流程</a></li><li class="post-list-item"><a class="post-list-link" href="/post/S2-048/">CVE-2017-9791(S2-048)</a></li><li class="post-list-item"><a class="post-list-link" href="/post/MS17-010/">SMB漏洞利用</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2017 SF Zero
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="tooltip.Hexo"></a><a href="http://zone.secevery.com/" target="_blank" title="Never Give Up， Never Lose Hope">祭死去的乌云</a>  by SF Zero <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >本站到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 25;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "//hm.baidu.com/hm.js?true";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>

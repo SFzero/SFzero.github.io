@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+  <title>VM下搭建T-pot | SF Zero的博客</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="这两年蜜罐技术被关注的越来越多，也逐渐形成低交互、中交互、高交互等交互程度的各类蜜罐，从web业务蜜罐、ssh应用蜜罐、网络协议栈蜜罐到系统主机型蜜罐的各功能型蜜罐。小到一个word文档的蜜标，大到一个系统级的服务蜜罐，再到多功能蜜罐组成的蜜网，大到包含流控制重定向分布式蜜网组成的蜜场。（以上内容出自Freebuf，其实之所以搭蜜罐是因为弟弟公司的技术大牛田老师让弟弟搭一个，弟弟问我搞过没，正好">
+<meta property="og:type" content="article">
+<meta property="og:title" content="VM下搭建T-pot">
+<meta property="og:url" content="http://yoursite.com/post/T-pot/index.html">
+<meta property="og:site_name" content="SF Zero的博客">
+<meta property="og:description" content="这两年蜜罐技术被关注的越来越多，也逐渐形成低交互、中交互、高交互等交互程度的各类蜜罐，从web业务蜜罐、ssh应用蜜罐、网络协议栈蜜罐到系统主机型蜜罐的各功能型蜜罐。小到一个word文档的蜜标，大到一个系统级的服务蜜罐，再到多功能蜜罐组成的蜜网，大到包含流控制重定向分布式蜜网组成的蜜场。（以上内容出自Freebuf，其实之所以搭蜜罐是因为弟弟公司的技术大牛田老师让弟弟搭一个，弟弟问我搞过没，正好">
+<meta property="og:image" content="http://yoursite.com/img/tpot-1.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-2.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-3.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-4.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-5.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-6.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-7.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-8.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-9.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-10.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-11.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-12.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-13.png">
+<meta property="og:image" content="http://yoursite.com/img/tpot-14.png">
+<meta property="og:updated_time" content="2017-12-13T09:44:03.735Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="VM下搭建T-pot">
+<meta name="twitter:description" content="这两年蜜罐技术被关注的越来越多，也逐渐形成低交互、中交互、高交互等交互程度的各类蜜罐，从web业务蜜罐、ssh应用蜜罐、网络协议栈蜜罐到系统主机型蜜罐的各功能型蜜罐。小到一个word文档的蜜标，大到一个系统级的服务蜜罐，再到多功能蜜罐组成的蜜网，大到包含流控制重定向分布式蜜网组成的蜜场。（以上内容出自Freebuf，其实之所以搭蜜罐是因为弟弟公司的技术大牛田老师让弟弟搭一个，弟弟问我搞过没，正好">
+<meta name="twitter:image" content="http://yoursite.com/img/tpot-1.png">
+  
+    <link rel="alternative" href="/atom.xml" title="SF Zero的博客" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/img/rabbit.ico">
+  
+  
+      <link rel="stylesheet" href="//cdn.bootcss.com/animate.css/3.5.0/animate.min.css">
+  
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/font-awesome/css/font-awesome.min.css">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  
+  
+      <link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+  
+  <!-- 加载特效 -->
+    <script src="/js/pace.js"></script>
+    <link href="/css/pace/pace-theme-flash.css" rel="stylesheet" />
+  <script>
+      var yiliaConfig = {
+          rootUrl: '/',
+          fancybox: true,
+          animate: true,
+          isHome: false,
+          isPost: true,
+          isArchive: false,
+          isTag: false,
+          isCategory: false,
+          open_in_new: false
+      }
+  </script>
+</head>
+<body>
+<!-- 点击爱心效果 -->
+<script src="/js/love.js"></script>
+<!-- 背景动画 -->
+<script src="/js/particle.js"></script>
+  <div id="container">
+    <div class="left-col">
+    <div class="overlay"></div>
+<div class="intrude-less">
+    <header id="header" class="inner">
+        <a href="/" class="profilepic">
+            
+            <img lazy-src="/img/head.gif" class="js-avatar">
+            
+        </a>
+
+        <hgroup>
+          <h1 class="header-author"><a href="/" title="你之所以看不见黑暗,是因为有人正竭尽全力,把黑暗挡在我们看不见的地方">SF Zero</a></h1>
+        </hgroup>
+
+        
+        <p class="header-subtitle">Yesterday you said tomorrow</p>
+        
+        
+        
+            <div id="switch-btn" class="switch-btn">
+                <div class="icon">
+                    <div class="icon-ctn">
+                        <div class="icon-wrap icon-house" data-idx="0">
+                            <div class="birdhouse"></div>
+                            <div class="birdhouse_holes"></div>
+                        </div>
+                        <div class="icon-wrap icon-ribbon hide" data-idx="1">
+                            <div class="ribbon"></div>
+                        </div>
+                        
+                        <div class="icon-wrap icon-link hide" data-idx="2">
+                            <div class="loopback_l"></div>
+                            <div class="loopback_r"></div>
+                        </div>
+                        
+                        
+                    </div>
+                    
+                </div>
+                <div class="tips-box hide">
+                    <div class="tips-arrow"></div>
+                    <ul class="tips-inner">
+                        <li>菜单</li>
+                        <li>标签</li>
+                        
+                        <li>友情链接</li>
+                        
+                        
+                    </ul>
+                </div>
+            </div>
+        
+
+        <div id="switch-area" class="switch-area">
+            <div class="switch-wrap">
+                <section class="switch-part switch-part1">
+                    <nav class="header-menu">
+                        <ul>
+                        
+                            <li><a href="/">主页</a></li>
+                        
+                            <li><a href="/archives/">文章</a></li>
+                        
+                            <li><a href="/SecNavi/">导航</a></li>
+                        
+                            <li><a href="/about">关于</a></li>
+                        
+                        </ul>
+                    </nav>
+                    <nav class="header-nav">
+                        <ul class="social">
+                            
+                                <a class="fl mail" target="_blank" href="mailto:2255453@qq.com" title="mail">mail</a>
+                            
+                        </ul>
+                    </nav>
+                </section>
+                
+                
+                <section class="switch-part switch-part2">
+                    <div class="widget tagcloud" id="js-tagcloud">
+                        <a href="/tags/EternalBlue/" style="font-size: 10px;">EternalBlue</a> <a href="/tags/NSA/" style="font-size: 10px;">NSA</a> <a href="/tags/Office远程代码执行/" style="font-size: 10px;">Office远程代码执行</a> <a href="/tags/struts2/" style="font-size: 10px;">struts2</a> <a href="/tags/思维导图/" style="font-size: 10px;">思维导图</a> <a href="/tags/扫描器/" style="font-size: 10px;">扫描器</a> <a href="/tags/注入/" style="font-size: 10px;">注入</a> <a href="/tags/测试流程/" style="font-size: 10px;">测试流程</a> <a href="/tags/渗透测试/" style="font-size: 10px;">渗透测试</a> <a href="/tags/越权访问/" style="font-size: 10px;">越权访问</a> <a href="/tags/远程命令执行/" style="font-size: 10px;">远程命令执行</a>
+                    </div>
+                </section>
+                
+                
+                
+                <section class="switch-part switch-part3">
+                    <div id="js-friends">
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://www.shungg.cn/">阿舜</a>
+                    
+                      <a target="_blank" class="main-nav-link switch-friends-link" href="http://blog.csdn.net/pygain">pygain</a>
+                    
+                    </div>
+                </section>
+                
+
+                
+            </div>
+        </div>
+    </header>                
+</div>
+    </div>
+    <div class="mid-col">
+      <nav id="mobile-nav">
+      <div class="overlay">
+          <div class="slider-trigger"></div>
+          <h1 class="header-author js-mobile-header hide"><a href="/" title="Me">SF Zero</a></h1>
+      </div>
+    <div class="intrude-less">
+        <header id="header" class="inner">
+            <a href="/" class="profilepic">
+                
+                    <img lazy-src="//img/head.gif" class="js-avatar">
+                
+            </a>
+            <hgroup>
+              <h1 class="header-author"><a href="/" title="Me">SF Zero</a></h1>
+            </hgroup>
+            
+            <p class="header-subtitle">Yesterday you said tomorrow</p>
+            
+            <nav class="header-menu">
+                <ul>
+                
+                    <li><a href="/">主页</a></li>
+                
+                    <li><a href="/archives/">文章</a></li>
+                
+                    <li><a href="/SecNavi/">导航</a></li>
+                
+                    <li><a href="/about">关于</a></li>
+                
+                <div class="clearfix"></div>
+                </ul>
+            </nav>
+            <nav class="header-nav">
+                <div class="social">
+                    
+                        <a class="mail" target="_blank" href="mailto:2255453@qq.com" title="mail">mail</a>
+                    
+                </div>
+            </nav>
+        </header>                
+    </div>
+</nav>
+      <div class="body-wrap"><article id="post-T-pot" class="article article-type-post" itemscope itemprop="blogPost">
+  
+    <div class="article-meta">
+      <a href="/post/T-pot/" class="article-date">
+      <time datetime="2017-12-12T09:54:32.000Z" itemprop="datePublished">2017-12-12</time>
+</a>
+    </div>
+  
+  <div class="article-inner">
+    
+      <input type="hidden" class="isFancy" />
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      VM下搭建T-pot
+    </h1>
+  
+
+      </header>
+      
+      <div class="article-info article-info-post">
+        
+    <div class="article-category tagcloud">
+    <a class="article-category-link" href="/categories/蜜罐/">蜜罐</a>
+    </div>
+
+
+        
+        <div class="clearfix"></div>
+      </div>
+      
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+          
+        <blockquote>
+<p>这两年蜜罐技术被关注的越来越多，也逐渐形成低交互、中交互、高交互等交互程度的各类蜜罐，从web业务蜜罐、ssh应用蜜罐、网络协议栈蜜罐到系统主机型蜜罐的各功能型蜜罐。小到一个word文档的蜜标，大到一个系统级的服务蜜罐，再到多功能蜜罐组成的蜜网，大到包含流控制重定向分布式蜜网组成的蜜场。（以上内容出自Freebuf，其实之所以搭蜜罐是因为弟弟公司的技术大牛田老师让弟弟搭一个，弟弟问我搞过没，正好我之前也没研究过，所以搭一个玩玩。）</p>
+</blockquote>
+<a id="more"></a>
+<p><img src="/img/tpot-1.png" alt=""></p>
+<h3 id="0x01-部署环境"><a href="#0x01-部署环境" class="headerlink" title="0x01 部署环境"></a>0x01 部署环境</h3><p>系统：Ubuntu16.04系统（VM）<br>这里丢一个T-pot的官方github：<a href="https://github.com/rhiever/tpot/issues?utf8=%E2%9C%93&amp;q=" target="_blank" rel="external">https://github.com/rhiever/tpot/issues?utf8=%E2%9C%93&amp;q=</a></p>
+<hr>
+<h3 id="0x02-模块简介"><a href="#0x02-模块简介" class="headerlink" title="0x02 模块简介"></a>0x02 模块简介</h3><p>T-Pot16.10 使用Ubuntuserver 16.04 LTS 系统，基于docker 技术提供了下面一些蜜罐容器：<br> 1 Conpot: 低交互工控蜜罐，提供一系列通用工业控制协议, 能够模拟复杂的工控基础设施。</p>
+<p> 2 Cowrie: 基于kippo更改的中交互ssh蜜罐, 可以对暴力攻击账号密码等记录，并提供伪造的文件系统环境记录黑客操作行为, 并保存通过wget/curl下载的文件以及通过SFTP、SCP上传的文件。</p>
+<p> 3 Dionaea: Dionaea是运行于Linux上的一个应用程序，将程序运行于网络环境下，它开放Internet常见服务的默认端口，当有外来连接时，模拟正常服务给予反馈，同时记录下出入网络数据流。网络数据流经由检测模块检测后按类别进行处理，如果有 shellcode 则进行仿真执行；程序会自动下载 shellcode 中指定或后续攻击命令指定下载的恶意文件。</p>
+<p> 4 Elasticpot: 模拟elastcisearch RCE漏洞的蜜罐，通过伪造函数在/,/_search, /_nodes的请求上回应脆弱ES实例的JSON格式消息。</p>
+<p> 5 Emobility: 在T-Pot中使用的高交互蜜罐容器， 旨在收集针对下一代交通基础设施的攻击动机和方法。Emobility蜜网包含一个中央收费系统，几个收费点，模拟用户的事务。一旦攻击者访问中控系统web界面，监控并处理运行收费交易，并与收费点交互。除此之外，在随机时间，黑客可能与正在收取车辆费用的用户进行交互。</p>
+<p> 6 Glastopf: 低交互型Web应用蜜罐, Glastopf蜜罐它能够模拟成千上万的web漏洞，针对攻击的不同攻击手段来回应攻击者，然后从对目标Web应用程序的攻击过程中收集数据。它的目标是针对自动化漏洞扫描/利用工具，通过对漏洞利用方式进行归类，针对某一类的利用方式返回对应的合理结果，以此实现低交互。</p>
+<p> 7 Honeytrap: 观察针对TCP或UDP服务的攻击，作为一个守护程序模拟一些知名的服务，并能够分析攻击字符串，执行相应的下载文件指令。</p>
+<hr>
+<h3 id="0x03-T-POT安装"><a href="#0x03-T-POT安装" class="headerlink" title="0x03 T-POT安装"></a>0x03 T-POT安装</h3><ol>
+<li>下载top.iso 或者自己创建操作系统环境，我是直接将下载好的镜像丢进了新建的虚拟机。</li>
+<li>安装到联网的VM或者物理机上。安装过程跟普通安装Ubuntu 过程一样， 其中需要为tsec用户设置密码。（这里注意！安装过程中一定要保证网络畅通！！！）<br><img src="/img/tpot-2.png" alt=""><br><img src="/img/tpot-3.png" alt=""><br>选择完语言后等一小会来到这个地方，按提示按对应的按键就行。<br><img src="/img/tpot-4.png" alt=""></li>
+<li>漫长的等待之后，第一次启动系统时将选择安装类型，此时将根据选择下载安装相应容器服务。<br>有4种安装类型，不同安装类型需要的满足要求不一样， 我们这里选典型T-Pot安装。就是1<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">1）T-Pot Installation (Cowrie, Dionaea, ElasticPot, Glastopf, Honeytrap, ELK, Suricata+P0f &amp; Tools)</div><div class="line"></div><div class="line">2）Sensor Installation (Cowrie, Dionaea, ElasticPot, Glastopf, Honeytrap)</div><div class="line"></div><div class="line">3）Industrial Installation (ConPot, eMobility, ELK, Suricata+P0f &amp; Tools)</div><div class="line"></div><div class="line">4）Everything Installation (Everything, all of the above)</div></pre></td></tr></table></figure>
+</li>
+</ol>
+<p>后面设置web端的账号密码，再填写一些相关信息，自动完成docker镜像安装下载，安装成功后重新启动系统进入如下页面:<br><img src="/img/tpot-5.png" alt=""><br><img src="/img/tpot-6.png" alt=""><br><img src="/img/tpot-7.png" alt=""></p>
+<hr>
+<h3 id="0x04-T-POTweb界面预览"><a href="#0x04-T-POTweb界面预览" class="headerlink" title="0x04 T-POTweb界面预览"></a>0x04 T-POTweb界面预览</h3><ol>
+<li>接下来我们进入web端管理页面来看一下，浏览器地址栏输入192.168.2.117:64297，输入账号密码后将会看到下图：<br><img src="/img/tpot-8.png" alt=""><br><img src="/img/tpot-9.png" alt=""><br><img src="/img/tpot-10.png" alt=""><br><img src="/img/tpot-11.png" alt=""><br><img src="/img/tpot-12.png" alt=""><br>这里找到update.sh文件，运行一下<br><img src="/img/tpot-13.png" alt=""><br>然后你将看到<br><img src="/img/tpot-14.png" alt=""><br>英文不太好，大概意思是grub-pc软件包正在升级，大多数情况下，建议自动运行grub-install，以防止安装的GRUB核心映像与GRUB不同步，如果您不确定哪个驱动器被BIOS指定为启动驱动器，那么将GRUB安装到所有驱动器上。<br>这里用空格进行选择然后TAB键切换到ok回车就行。<br>接下来就等他自动下载安装就好了，然后。。。<br>就没有然后了，英文实在菜（虽然最近在努力背单词），今天就到这吧，有时间在好好研究下这个蜜罐！</li>
+</ol>
+<hr>
+
+      
+      
+    </div>
+    
+  </div>
+  
+    
+    <div class="copyright">
+        <p><span>本文标题:</span><a href="/post/T-pot/">VM下搭建T-pot</a></p>
+        <p><span>文章作者:</span><a href="/" title="访问 SF Zero 的个人博客">SF Zero</a></p>
+        <p><span>发布时间:</span>2017年12月12日 - 17时54分</p>
+        <p><span>最后更新:</span>2017年12月13日 - 17时44分</p>
+        <p>
+            <span>原始链接:</span><a class="post-url" href="/post/T-pot/" title="VM下搭建T-pot">http://yoursite.com/post/T-pot/</a>
+            <span class="copy-path" data-clipboard-text="原文: http://yoursite.com/post/T-pot/　　作者: SF Zero" title="点击复制文章链接"><i class="fa fa-clipboard"></i></span>
+            <script src="/js/clipboard.min.js"></script>
+            <script> var clipboard = new Clipboard('.copy-path'); </script>
+        </p>
+        <p>
+            <span>许可协议:</span><i class="fa fa-creative-commons"></i> <a rel="license" href="http://creativecommons.org/licenses/by-nc-sa/3.0/cn/" title="中国大陆 (CC BY-NC-SA 3.0 CN)" target = "_blank">"署名-非商用-相同方式共享 3.0"</a> 转载请保留原文链接及作者。
+        </p>
+    </div>
+
+
+
+<nav id="article-nav">
+  
+  
+    <a href="/post/docker-巡风-pocscan/" id="article-nav-older" class="article-nav-link-wrap">
+      <div class="article-nav-title">Kali下安装docker、巡风、pocscan扫描器</div>
+      <strong class="article-nav-caption">></strong>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+    <div id="toc" class="toc-article">
+    <strong class="toc-title">文章目录</strong>
+    <ol class="toc"><li class="toc-item toc-level-3"><a class="toc-link" href="#0x01-部署环境"><span class="toc-number">1.</span> <span class="toc-text">0x01 部署环境</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x02-模块简介"><span class="toc-number">2.</span> <span class="toc-text">0x02 模块简介</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x03-T-POT安装"><span class="toc-number">3.</span> <span class="toc-text">0x03 T-POT安装</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#0x04-T-POTweb界面预览"><span class="toc-number">4.</span> <span class="toc-text">0x04 T-POTweb界面预览</span></a></li></ol>
+</div>
+<input type="button" id="tocButton" value="隐藏目录"  title="点击按钮隐藏或者显示文章目录">
+
+<script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script>
+    var valueHide = "隐藏目录";
+    var valueShow = "显示目录";
+
+    if ($(".left-col").is(":hidden")) {
+        $("#tocButton").attr("value", valueShow);
+    }
+    $("#tocButton").click(function() {
+        if ($("#toc").is(":hidden")) {
+            $("#tocButton").attr("value", valueHide);
+            $("#toc").slideDown(320);
+        }
+        else {
+            $("#tocButton").attr("value", valueShow);
+            $("#toc").slideUp(350);
+        }
+    })
+    if ($(".toc").length < 1) {
+        $("#toc, #tocButton").hide();
+    }
+</script>
+
+
+
+
+
+<div class="bdsharebuttonbox">
+	<a href="#" class="fx fa-weibo bds_tsina" data-cmd="tsina" title="分享到新浪微博"></a>
+	<a href="#" class="fx fa-weixin bds_weixin" data-cmd="weixin" title="分享到微信"></a>
+	<a href="#" class="fx fa-qq bds_sqq" data-cmd="sqq" title="分享到QQ好友"></a>
+	<a href="#" class="fx fa-facebook-official bds_fbook" data-cmd="fbook" title="分享到Facebook"></a>
+	<a href="#" class="fx fa-twitter bds_twi" data-cmd="twi" title="分享到Twitter"></a>
+	<a href="#" class="fx fa-linkedin bds_linkedin" data-cmd="linkedin" title="分享到linkedin"></a>
+	<a href="#" class="fx fa-files-o bds_copy" data-cmd="copy" title="分享到复制网址"></a>
+</div>
+<script>window._bd_share_config={"common":{"bdSnsKey":{},"bdText":"","bdMini":"2","bdMiniList":false,"bdPic":"","bdStyle":"2","bdSize":"24"},"share":{}};with(document)0[(getElementsByTagName('head')[0]||body).appendChild(createElement('script')).src='/static/api/js/share.js?v=89860593.js?cdnversion='+~(-new Date()/36e5)];</script>
+
+
+
+
+    
+
+
+
+    <div class="scroll" id="post-nav-button">
+        
+            <a href="/" title="回到主页"><i class="fa fa-home"></i></a>
+        
+        <a title="文章列表"><i class="fa fa-bars"></i><i class="fa fa-times"></i></a>
+        
+            <a href="/post/docker-巡风-pocscan/" title="下一篇: Kali下安装docker、巡风、pocscan扫描器">
+                <i class="fa fa-angle-right"></i>
+            </a>
+        
+    </div>
+    <ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/post/T-pot/">VM下搭建T-pot</a></li><li class="post-list-item"><a class="post-list-link" href="/post/docker-巡风-pocscan/">Kali下安装docker、巡风、pocscan扫描器</a></li><li class="post-list-item"><a class="post-list-link" href="/post/CVE-2017-11882/">CVE-2017-11882</a></li><li class="post-list-item"><a class="post-list-link" href="/post/越权拿超管/">记一次越权访问拿下超级管理员</a></li><li class="post-list-item"><a class="post-list-link" href="/post/Xpath注入/">Xpath注入</a></li><li class="post-list-item"><a class="post-list-link" href="/post/ca证书绕过/">记一次渗透过程中的CA证书绕过</a></li><li class="post-list-item"><a class="post-list-link" href="/post/Penetration Test/">Penetration Test流程</a></li><li class="post-list-item"><a class="post-list-link" href="/post/S2-048/">CVE-2017-9791(S2-048)</a></li><li class="post-list-item"><a class="post-list-link" href="/post/MS17-010/">SMB漏洞利用</a></li></ul>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+    <script>
+        $(".post-list").addClass("toc-article");
+        $(".post-list-item a").attr("target","_blank");
+        $("#post-nav-button > a:nth-child(2)").click(function() {
+            $(".fa-bars, .fa-times").toggle();
+            $(".post-list").toggle(300);
+            if ($(".toc").length > 0) {
+                $("#toc, #tocButton").toggle(200, function() {
+                    if ($(".switch-area").is(":visible")) {
+                        $("#tocButton").attr("value", valueHide);
+                        }
+                    })
+            }
+            else {
+            }
+        })
+    </script>
+
+
+
+    <script>
+        
+    </script>
+</div>
+      <footer id="footer">
+    <div class="outer">
+        <div id="footer-info">
+            <div class="footer-left">
+                &copy; 2017 SF Zero
+            </div>
+            <div class="footer-right">
+                <a href="http://hexo.io/" target="_blank" title="tooltip.Hexo"></a><a href="http://zone.secevery.com/" target="_blank" title="Never Give Up， Never Lose Hope">祭死去的乌云</a>  by SF Zero <i class="fa fa-heart animated infinite pulse"></i>
+            </div>
+        </div>
+        
+            <div class="visit">
+                
+                    <span id="busuanzi_container_site_pv" style='display:none'>
+                        <span id="site-visit" >本站到访数: 
+                            <span id="busuanzi_value_site_uv"></span>
+                        </span>
+                    </span>
+                
+                
+                    <span>, </span>
+                
+                
+                    <span id="busuanzi_container_page_pv" style='display:none'>
+                        <span id="page-visit">本页阅读量: 
+                            <span id="busuanzi_value_page_pv"></span>
+                        </span>
+                    </span>
+                
+            </div>
+        
+    </div>
+</footer>
+
+    </div>
+    <script src="https://7.url.cn/edu/jslib/comb/require-2.1.6,jquery-1.9.1.min.js"></script>
+<script src="/js/main.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            var backgroundnum = 25;
+            var backgroundimg = "url(/background/bg-x.jpg)".replace(/x/gi, Math.ceil(Math.random() * backgroundnum));
+            $("#mobile-nav").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+            $(".left-col").css({"background-image": backgroundimg,"background-size": "cover","background-position": "center"});
+        })
+    </script>
+
+
+
+
+	<script>
+	var _hmt = _hmt || [];
+	(function() {
+	  var hm = document.createElement("script");
+	  hm.src = "//hm.baidu.com/hm.js?true";
+	  var s = document.getElementsByTagName("script")[0]; 
+	  s.parentNode.insertBefore(hm, s);
+	})();
+	</script>
+
+
+<div class="scroll" id="scroll">
+    <a href="#"><i class="fa fa-arrow-up"></i></a>
+    <a href="#comments"><i class="fa fa-comments-o"></i></a>
+    <a href="#footer"><i class="fa fa-arrow-down"></i></a>
+</div>
+<script>
+    $(document).ready(function() {
+        if ($("#comments").length < 1) {
+            $("#scroll > a:nth-child(2)").hide();
+        };
+    })
+</script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>
