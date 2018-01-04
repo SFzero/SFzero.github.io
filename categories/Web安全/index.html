@@ -3,12 +3,12 @@
 <head>
   <meta charset="utf-8">
   
-  <title>Category: Web安全 | SF Zero的博客</title>
+  <title>Category: web安全 | SF Zero的博客</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="你之所以看不见黑暗,是因为有人正竭尽全力,把黑暗挡在我们看不见的地方!">
 <meta property="og:type" content="website">
 <meta property="og:title" content="SF Zero的博客">
-<meta property="og:url" content="http://yoursite.com/categories/Web安全/index.html">
+<meta property="og:url" content="http://yoursite.com/categories/web安全/index.html">
 <meta property="og:site_name" content="SF Zero的博客">
 <meta property="og:description" content="你之所以看不见黑暗,是因为有人正竭尽全力,把黑暗挡在我们看不见的地方!">
 <meta name="twitter:card" content="summary">
@@ -217,62 +217,27 @@
   <div class="archive-article-inner">
     <header class="archive-article-header">
           <div class="article-meta">
-              <a href="/post/Xpath注入/" class="archive-article-date">
-      <time datetime="2017-08-07T01:33:08.000Z" itemprop="datePublished">08-07</time>
+              <a href="/post/ca证书绕过/" class="archive-article-date">
+      <time datetime="2017-07-25T05:50:30.000Z" itemprop="datePublished">07-25</time>
 </a>
         </div>
          
   
     <h1 itemprop="name">
-      <a class="archive-article-title" href="/post/Xpath注入/">Xpath注入</a>
+      <a class="archive-article-title" href="/post/ca证书绕过/">记一次渗透过程中的CA证书绕过</a>
     </h1>
   
 
         <div class="article-info info-on-archive">
           
     <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Web安全/">Web安全</a>
+    <a class="article-category-link" href="/categories/web安全/">web安全</a>
     </div>
 
 
           
     <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/注入/">注入</a></li></ul>
-    </div>
-
-        </div>
-        <div class="clearfix"></div>
-    </header>
-  </div>
-</article>
-  
-    
-    
-    <article class="archive-article archive-type-post">
-  <div class="archive-article-inner">
-    <header class="archive-article-header">
-          <div class="article-meta">
-              <a href="/post/S2-048/" class="archive-article-date">
-      <time datetime="2017-07-08T06:51:46.000Z" itemprop="datePublished">07-08</time>
-</a>
-        </div>
-         
-  
-    <h1 itemprop="name">
-      <a class="archive-article-title" href="/post/S2-048/">CVE-2017-9791(S2-048)</a>
-    </h1>
-  
-
-        <div class="article-info info-on-archive">
-          
-    <div class="article-category tagcloud">
-    <a class="article-category-link" href="/categories/Web安全/">Web安全</a>
-    </div>
-
-
-          
-    <div class="article-tag tagcloud">
-        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/struts2/">struts2</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/远程命令执行/">远程命令执行</a></li></ul>
+        <ul class="article-tag-list"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/渗透测试/">渗透测试</a></li></ul>
     </div>
 
         </div>
@@ -371,6 +336,41 @@
                 $(".article-info").toggle(200);
             });
         });
+    </script>
+
+<script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
+</script>
+
+  <script language="javascript">
+    $(function() {
+        $("a[title]").each(function() {
+            var a = $(this);
+            var title = a.attr('title');
+            if (title == undefined || title == "") return;
+            a.data('title', title).removeAttr('title').hover(
+
+            function() {
+                var offset = a.offset();
+                $("<div id=\"anchortitlecontainer\"></div>").appendTo($("body")).html(title).css({
+                    top: offset.top - a.outerHeight() - 15,
+                    left: offset.left + a.outerWidth()/2 + 1
+                }).fadeIn(function() {
+                    var pop = $(this);
+                    setTimeout(function() {
+                        pop.remove();
+                    }, pop.text().length * 800);
+                });
+            }, function() {
+                $("#anchortitlecontainer").remove();
+            });
+        });
+    });
+</script>
+
+
+  </div>
+</body>
+</html>        });
     </script>
 
 <script async src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js">
